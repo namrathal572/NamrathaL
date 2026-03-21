@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namratha L | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-glow: #00d2ff;
+            --secondary-glow: #9d00ff;
+            --bg-dark: #020205;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-color: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg-dark); color: var(--text-color); overflow-x: hidden; }
+
+        /* --- Advanced Neural Canvas --- */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: linear-gradient(to bottom, #050510, #000000);
+        }
+
+        /* --- Navbar --- */
+        nav {
+            position: fixed;
+            top: 0; width: 100%; padding: 20px 10%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(15px);
+            z-index: 1000; border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo { font-weight: 700; font-size: 1.5rem; letter-spacing: 2px; color: var(--primary-glow); }
+        .nav-links { display: flex; list-style: none; }
+        .nav-links li { margin-left: 30px; }
+        .nav-links a { text-decoration: none; color: #fff; font-size: 0.85rem; transition: 0.3s; opacity: 0.8; }
+        .nav-links a:hover { color: var(--primary-glow); opacity: 1; text-shadow: 0 0 8px var(--primary-glow); }
+
+        /* --- Sections --- */
+        section { min-height: 100vh; padding: 120px 10%; display: flex; flex-direction: column; justify-content: center; }
+        h2 { font-size: 2.2rem; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 3px; border-left: 4px solid var(--primary-glow); padding-left: 15px; }
+
+        /* --- 3D Profile Card --- */
+        .hero-container { display: flex; justify-content: center; perspective: 1200px; }
+        .glass-card {
+            background: var(--glass-bg); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 24px;
+            padding: 60px; display: flex; align-items: center; gap: 50px;
+            max-width: 950px; transform-style: preserve-3d;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+        }
+
+        .profile-img {
+            width: 220px; height: 220px; border-radius: 50%;
+            border: 3px solid var(--primary-glow); object-fit: cover;
+            animation: float 5s ease-in-out infinite;
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.3);
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
+        .btn {
+            display: inline-block; padding: 12px 28px; background: transparent;
+            color: #fff; border: 1px solid var(--primary-glow); border-radius: 4px;
+            text-decoration: none; font-weight: 500; transition: 0.4s; margin-top: 25px;
+            text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem;
+        }
+        .btn:hover { background: var(--primary-glow); box-shadow: 0 0 25px var(--primary-glow); color: #000; }
+
+        /* --- Social Icons --- */
+        .social-links a { color: #fff; margin-right: 20px; font-size: 1.3rem; transition: 0.3s; opacity: 0.6; }
+        .social-links a:hover { opacity: 1; color: var(--primary-glow); transform: scale(1.2); }
+
+        /* --- Grids --- */
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        
+        .card {
+            background: var(--glass-bg); padding: 40px; border-radius: 15px;
+            border: 1px solid var(--glass-border); transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .card:hover {
+            border-color: var(--primary-glow);
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .progress-bar { width: 100%; height: 4px; background: #111; border-radius: 10px; margin-top: 15px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary-glow); }
+
+        .reveal { opacity: 0; transform: translateY(40px); transition: 1.2s all ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        footer { text-align: center; padding: 60px; border-top: 1px solid var(--glass-border); font-size: 0.8rem; opacity: 0.6; }
+
+        @media (max-width: 850px) { 
+            .glass-card { flex-direction: column; text-align: center; padding: 40px 20px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <nav>
+        <div class="logo">NAMRATHA L</div>
+        <ul class="nav-links">
+            <li><a href="#home">HOME</a></li>
+            <li><a href="#about">ABOUT</a></li>
+            <li><a href="#skills">SKILLS</a></li>
+            <li><a href="#certificates">CERTIFICATES</a></li>
+            <li><a href="#projects">PROJECTS</a></li>
+            <li><a href="#contact">CONTACT</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <div class="hero-container">
+            <div class="glass-card" id="tilt-card">
+                <img src="C:\Namratha\Namratha img.jpg" alt="Profile" class="profile-img">
+                <div class="hero-text">
+                    <h1>Namratha L</h1>
+                    <h3 style="color: var(--primary-glow); font-weight: 300;">BCA Student & Web Enthusiast</h3>
+                    <p style="opacity: 0.7; margin-top: 15px;">Intrested in Artificial Intelligence development turning into Smart and Creative solutions.</p>
+                    <div class="social-links" style="margin-top: 25px;">
+                        <a href="https://github.com/namrathal572"><i class="fab fa-github"></i></a>
+                        <a href="https://www.linkedin.com/in/namratha-l-28a801389"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/namratha._29?utm_source=qr&igsh=Mm9xOTNpb21wcWs3"><i class="fab fa-instagram"></i></a>
+                        <a href="https://wa.me/qr/LHZYCUSPEASBM1"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                    <a href="C:\Namratha\Resume.pdf" class="btn">View Resume</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="reveal">
+        <h2>About Me</h2>
+        <div class="card" style="max-width: 950px; line-height: 1.8;">
+            <p style="font-size: 1.1rem; margin-bottom: 20px;">
+                Hello! I'm <span style="color: var(--primary-glow); font-weight: 600;">Namratha</span>, a passionate BCA student with a deep interest in the intersection of design and technology. I specialize in building responsive, user-centric web applications that don't just work—they feel amazing to use.
+            </p>
+            <p style="opacity: 0.8;">
+                Currently, I am honing my skills in modern frontend frameworks and UI/UX principles. My goal is to bridge the gap between complex backend logic and beautiful frontend presentation. When I'm not coding, you'll find me exploring new design trends or working on creative digital projects.
+            </p>
+            <div style="margin-top: 30px; display: flex; gap: 40px; flex-wrap: wrap;">
+                <div>
+                    <h4 style="color: var(--primary-glow);">Location</h4>
+                    <p style="opacity: 0.7;">Karnataka, India</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary-glow);">Education</h4>
+                    <p style="opacity: 0.7;">Bachelor of Computer Applications</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--primary-glow);">Interests</h4>
+                    <p style="opacity: 0.7;"> UI Design, AI dev</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="reveal">
+        <h2>Skills</h2>
+        <div class="grid-container">
+            <div class="card">
+                <h4>UI Design </h4>
+                <div class="progress-bar"><div class="progress-fill" style="width: 85%;"></div></div>
+                <div>Figma,Canva</div>
+            </div>
+            <div class="card">
+                <h4>Tools and Platform</h4>
+                <div class="progress-bar"><div class="progress-fill" style="width: 75%;"></div></div>
+                <h4>VS code,MS office,Github,Github Desktop,Google AI studio and Live,Arena AI,Kimi,Gamma,
+                    Hugging face</h4>
+            </div>
+            <div class="card">
+                <h4>Core Technology</h4>
+                <div class="progress-bar"><div class="progress-fill" style="width: 70%;"></div></div>
+                <div>HTML,Javascript,CSS,Python</div>
+            </div>
+            <div class="card">
+                <h4>Databases</h4>
+                <div class="progress-bar"><div class="progress-fill" style="width: 70%;"></div></div>
+                <div>MySQL</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="certificates" class="reveal">
+        <h2>Certificates</h2>
+        <div class="grid-container">
+            <div class="card">
+                <i class="fas fa-award" style="color: var(--primary-glow); font-size: 1.5rem; margin-bottom: 15px;"></i>
+                <h5>AI</h5>
+                <p style="font-size: 0.8rem; opacity: 0.6;">Verified by IBM</p>
+                <a href="C:\Namratha\AI Certificate.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-award" style="color: var(--primary-glow); font-size: 1.5rem; margin-bottom: 15px;"></i>
+                <h5>Python</h5>
+                <p style="font-size: 0.8rem; opacity: 0.6;">Verified by Simplilearn</p>
+                <a href="C:\Namratha\Python certificate.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-award" style="color: var(--primary-glow); font-size: 1.5rem; margin-bottom: 15px;"></i>
+                <h5>Cybersecurity</h5>
+                <p style="font-size: 0.8rem; opacity: 0.6;">Verified by Simplilearn</p>
+                <a href="C:\Namratha\cybersecurity certificate .pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-award" style="color: var(--primary-glow); font-size: 1.5rem; margin-bottom: 15px;"></i>
+                <h5>Cybersecurity fundamentals</h5>
+                <p style="font-size: 0.8rem; opacity: 0.6;">Verified by IBM</p>
+                <a href="C:\Namratha\cyber Security fundamental certificate.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-award" style="color: var(--primary-glow); font-size: 1.5rem; margin-bottom: 15px;"></i>
+                <h5>Career management essential</h5>
+                <p style="font-size: 0.8rem; opacity: 0.6;">Verified by IBM</p>
+                <a href="C:\Namratha\Career management essential  Certificate.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-award" style="color: var(--primary-glow); font-size: 1.5rem; margin-bottom: 15px;"></i>
+                <h5>R programming</h5>
+                <p style="font-size: 0.8rem; opacity: 0.6;">Verified by Simplilearn</p>
+                <a href="C:\Namratha\Certificate R prg.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+            </div>
+            <div class="card">
+                <i class="fas fa-award" style="color: var(--primary-glow); font-size: 1.5rem; margin-bottom: 15px;"></i>
+                <h5>Digital Marketing</h5>
+                <p style="font-size: 0.8rem; opacity: 0.6;">Verified by Simplilearn</p>
+                <a href="C:\Namratha\Digital marketing certificate.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="reveal">
+        <h2>Projects</h2>
+        <div class="grid-container">
+            <div class="card">
+                <h3>01.Database management system(DBMS)</h3>
+                <a href="C:\Namratha\DBMS Project.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+                <p style="font-size: 0.85rem; opacity: 0.7;">Real-time API tracking with dark mode UI.</p>
+            </div>
+            <div class="card">
+                <h3>02.Operating System</h3>
+                <a href="C:\Namratha\Operating System Project.pdf" class="btn" style="padding: 5px 12px; margin-top: 15px;">View</a>
+                <p style="font-size: 0.85rem; opacity: 0.7;">Clean, minimal messaging interface.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="Professional Experience" class="reveal">
+        <h2>Professional Experience</h2>
+        <div class="grid-container">
+            <div class="card">
+                <h3>AI Intern</h3>
+                <p style="opacity: 0.8;">
+                    Aikshetra Tech Solutions Private Limited| 1 Month
+                </p>
+            </div>
+        </div>
+
+    </section>
+
+    <section id="contact" class="reveal">
+        <h2>Contact</h2>
+        <div class="card" style="text-align: center;">
+            <p>Ready to start a project?</p>
+            <h3 style="margin: 20px 0;">namrathal572@gmail.com</h3>
+            <a href="mailto:namrathal572@gmail.com" class="btn">Send Email</a>
+            <a href="https://wa.me/qr/LHZYCUSPEASBM1" class="btn">Say Hello on WhatsApp</a>
+        </div>
+    </section>
+
+    <footer>&copy; 2026 Namratha L. All Rights Reserved.</footer>
+
+    <script>
+        // --- NEURAL GALAXY BACKGROUND ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (e) => { mouse.x = e.x; mouse.y = e.y; });
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; init(); });
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.vx = Math.random() * 1 - 0.5;
+                this.vy = Math.random() * 1 - 0.5;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(0, 210, 255, 0.8)';
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+            }
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx*dx + dy*dy);
+                if (distance < mouse.radius) {
+                    const force = (mouse.radius - distance) / mouse.radius;
+                    const directionX = dx / distance;
+                    const directionY = dy / distance;
+                    this.x -= directionX * force * 3;
+                    this.y -= directionY * force * 3;
+                }
+
+                this.x += this.vx; this.y += this.vy;
+                if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+            }
+        }
+
+        function init() {
+            particles = [];
+            for (let i = 0; i < 120; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => { p.update(); p.draw(); });
+            
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 120) {
+                        ctx.strokeStyle = `rgba(0, 210, 255, ${1 - dist/120})`;
+                        ctx.lineWidth = 0.6;
+                        ctx.beginPath(); ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        init(); animate();
+
+        // --- 3D TILT ---
+        const card = document.getElementById('tilt-card');
+        window.addEventListener('mousemove', (e) => {
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 30;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 30;
+            card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
+
+        // --- REVEAL ---
+        window.addEventListener('scroll', () => {
+            document.querySelectorAll('.reveal').forEach(r => {
+                if(r.getBoundingClientRect().top < window.innerHeight - 100) r.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
